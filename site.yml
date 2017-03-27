@@ -1,0 +1,25 @@
+---
+- name: provision remote instance
+  hosts: zookeepers
+  become: yes
+  gather_facts: yes
+  tags: provision
+  connection: ssh
+  serial: 1
+  
+  vars:
+    zookeeper_hosts: [{host: db-01, id: 1},{host: db-02, id: 2},{host: db-03, id: 3}]
+    clickhouse_user_password: "changeme"
+    clickhouse_user_readonly_password: "changeme"
+    clickhouse_cluster:
+      name: "clickhouse"
+      shards:
+        - replicas: [{host: "db-01", port: "9000"}, {host: "db-02", port: "9000"}]
+        - replicas: [{host: "db-01", port: "9000"}, {host: "db-04", port: "9000"}]
+
+  roles:
+    - role: launchpad-ppa-webupd8
+    - { role: oracle-java,
+         oracle_java_set_as_default: yes }
+    - role: zookeeper
+    - role: clickhouse

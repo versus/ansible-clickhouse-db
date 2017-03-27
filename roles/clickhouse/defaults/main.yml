@@ -1,0 +1,7 @@
+---
+
+clickhouse_repo: "deb http://repo.yandex.ru/clickhouse/trusty stable main"
+clickhouse_repo_key_id: E0C56BD4
+clickhouse_repo_key_server: keyserver.ubuntu.com
+clickhouse_user_password: ""
+clickhouse_user_readonly_password: ""

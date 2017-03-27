@@ -1,0 +1,39 @@
+---
+
+- name: Add repo gpg key into system
+  apt_key:
+    keyserver: "{{ clickhouse_repo_key_server }}"
+    id: "{{ clickhouse_repo_key_id }}"
+    state: present
+
+- name: Add official clickhouse repo
+  apt_repository:
+    repo: "{{ clickhouse_repo }}"
+    state: present
+
+- name: Install clickhouse server and client
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 180
+  with_items:
+    - clickhouse-server-common
+    - clickhouse-client
+
+- name: Enable clickhouse service
+  service: name=clickhouse-server enabled=yes
+  tags: deploy
+
+
+- name: Update the users config
+  template: src=users.xml.j2 dest=/etc/clickhouse-server/users.xml
+  tags: deploy
+  notify:
+    - Restart clickhouse-server 
+
+- name: Update the  config.xml
+  template: src=config.xml.j2 dest=/etc/clickhouse-server/config.xml
+  tags: deploy
+  notify:
+    - Restart clickhouse-server 
