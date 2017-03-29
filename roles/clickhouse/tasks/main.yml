@@ -21,6 +21,9 @@
     - clickhouse-server-common
     - clickhouse-client
 
+- name: Create data directory in /data/clickhouse
+  file: path=/data/clickhouse state=directory owner=clickhouse group=clickhouse mode=0775
+
 - name: Enable clickhouse service
   service: name=clickhouse-server enabled=yes
   tags: deploy
@@ -30,10 +33,10 @@
   template: src=users.xml.j2 dest=/etc/clickhouse-server/users.xml
   tags: deploy
   notify:
-    - Restart clickhouse-server 
+    - Restart clickhouse-server
 
 - name: Update the  config.xml
   template: src=config.xml.j2 dest=/etc/clickhouse-server/config.xml
   tags: deploy
   notify:
-    - Restart clickhouse-server 
+    - Restart clickhouse-server
